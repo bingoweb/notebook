@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Just+Another+Hand&display=swap');
+
+body {
+    background-image: url('https://images.unsplash.com/photo-1611600700192-d87eaeed4f81?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d29vZCUyMHRleHR1cmV8ZW58MHx8MHx8fDA%3D');
+    background-size: cover;
+    font-family: 'Indie Flower', cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.notebook {
+    width: 800px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    padding: 20px 40px 20px 80px; /* Add padding for the spiral */
+}
+
+.notebook::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 40px;
+    width: 10px;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        #ccc,
+        #ccc 2px,
+        transparent 2px,
+        transparent 20px
+    );
+}
+
+.site-header h1 {
+    font-family: 'Just Another Hand', cursive;
+    font-size: 4em;
+    text-align: center;
+    margin: 0;
+    color: #333;
+}
+
+.content {
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 29px, #ccc 30px);
+    line-height: 30px;
+    padding: 20px 0;
+}
+
+.post h2 {
+    font-family: 'Just Another Hand', cursive;
+    font-size: 2.5em;
+    margin: 0 0 10px;
+    color: #007bff;
+}
+
+.post-meta {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.post p {
+    margin: 0 0 30px;
+    font-size: 1.2em;
+}
+
+.site-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #555;
+}
