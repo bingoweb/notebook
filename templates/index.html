@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Colab Project Finder</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        #project-info { margin-top: 30px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; display: inline-block; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Random Colab Project Finder</h1>
+    <button id="find-project-btn">Find Random Colab Project</button>
+    <div id="project-info" style="display:none;">
+        <h2 id="project-name"></h2>
+        <p id="project-description"></p>
+        <a id="colab-link" href="#" target="_blank">Open in Colab</a>
+    </div>
+
+    <script>
+        document.getElementById('find-project-btn').addEventListener('click', () => {
+            fetch('/find-project')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        document.getElementById('project-name').innerText = data.name;
+                        document.getElementById('project-description').innerText = data.description;
+                        document.getElementById('colab-link').href = data.colab_url;
+                        document.getElementById('project-info').style.display = 'block';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
