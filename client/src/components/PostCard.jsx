@@ -4,11 +4,13 @@ import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import { postAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import PropTypes from 'prop-types';
 
 const PostCard = ({ post }) => {
   const { isAuthenticated } = useAuth();
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likesCount || 0);
+  const [loading, setLoading] = useState(false);
 
   const handleLike = async () => {
     if (!isAuthenticated) {
@@ -16,12 +18,19 @@ const PostCard = ({ post }) => {
       return;
     }
 
+    if (loading) return;
+
     try {
+      setLoading(true);
       const { data } = await postAPI.like(post._id);
       setLiked(data.data.liked);
       setLikesCount(data.data.likesCount);
+      toast.success(data.data.liked ? 'Beğenildi!' : 'Beğeni kaldırıldı');
     } catch (error) {
-      toast.error('Bir hata oluştu');
+      toast.error(error.response?.data?.message || 'Bir hata oluştu');
+      console.error('Like error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,6 +44,7 @@ const PostCard = ({ post }) => {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
+        toast.success('Paylaşıldı!');
       } catch (err) {
         if (err.name !== 'AbortError') {
           copyToClipboard(shareData.url);
@@ -46,11 +56,15 @@ const PostCard = ({ post }) => {
   };
 
   const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast.success('Link kopyalandı!');
-    }).catch(() => {
-      toast.error('Kopyalama başarısız');
-    });
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        toast.success('Link kopyalandı!');
+      }).catch(() => {
+        toast.error('Kopyalama başarısız');
+      });
+    } else {
+      toast.error('Tarayıcınız bu özelliği desteklemiyor');
+    }
   };
 
   return (
@@ -76,7 +90,7 @@ const PostCard = ({ post }) => {
         </div>
       </header>
       <div className="post-content" itemProp="articleBody">
-        <p>{post.excerpt || post.content.substring(0, 200) + '...'}</p>
+        <p>{post.excerpt || (post.content?.substring(0, 200) + '...') || 'İçerik yükleniyor...'}</p>
       </div>
       <footer className="post-footer">
         <div className="post-tags">
@@ -95,7 +109,13 @@ const PostCard = ({ post }) => {
               <path d="M7.5 11.5l5-2m-5 4l5-2"/>
             </svg>
           </button>
-          <button className={`like-btn ${liked ? 'liked' : ''}`} aria-label="Beğen" title="Beğen" onClick={handleLike}>
+          <button
+            className={`like-btn ${liked ? 'liked' : ''}`}
+            aria-label="Beğen"
+            title="Beğen"
+            onClick={handleLike}
+            disabled={loading}
+          >
             <svg width="16" height="16" viewBox="0 0 20 20" fill={liked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M10 17.5l-1.5-1.35C3.4 11.36 1 9.28 1 6.5 1 4.42 2.42 3 4.5 3c1.74 0 3.41.81 4.5 2.09C10.09 3.81 11.76 3 13.5 3 15.58 3 17 4.42 17 6.5c0 2.78-2.4 4.86-7.5 9.65L10 17.5z"/>
             </svg>
@@ -105,6 +125,22 @@ const PostCard = ({ post }) => {
       </footer>
     </article>
   );
+};
+
+PostCard.propTypes = {
+  post: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    slug: PropTypes.string.isRequired,
+    content: PropTypes.string,
+    excerpt: PropTypes.string,
+    category: PropTypes.string.isRequired,
+    tags: PropTypes.arrayOf(PropTypes.string),
+    publishedAt: PropTypes.string.isRequired,
+    readingTime: PropTypes.number.isRequired,
+    likesCount: PropTypes.number,
+    likes: PropTypes.arrayOf(PropTypes.string)
+  }).isRequired
 };
 
 export default PostCard;

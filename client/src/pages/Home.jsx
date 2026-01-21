@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PostCard from '../components/PostCard';
+import Loading from '../components/Loading';
 import { postAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -39,7 +40,7 @@ const Home = () => {
       <main id="main-content" className="content" role="main">
         <section className="posts-grid" aria-label="Blog yazıları">
           {loading ? (
-            <p style={{ textAlign: 'center', padding: '2rem' }}>Yükleniyor...</p>
+            <Loading message="Yazılar yükleniyor..." />
           ) : posts.length === 0 ? (
             <p style={{ textAlign: 'center', padding: '2rem' }}>Henüz yazı bulunmuyor.</p>
           ) : (
